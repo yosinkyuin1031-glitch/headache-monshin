@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>頭痛専門 Web問診票 | 三宮元町鍼灸整体院C-cure</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a3a5c;
+      --primary-light: #2a5280;
+      --accent: #4a9eca;
+      --accent-soft: #e8f4fb;
+      --warm: #f5f0eb;
+      --text: #2c2c2c;
+      --text-muted: #6b7280;
+      --border: #d1dde8;
+      --success: #2d8a4e;
+      --white: #ffffff;
+      --shadow: 0 4px 24px rgba(26,58,92,0.08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: #f0f4f8;
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ヘッダー */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 60%, #3a7ab5 100%);
+      color: white;
+      padding: 40px 20px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -30px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      font-family: 'Noto Serif JP', serif;
+    }
+    .hero h1 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      font-size: 14px;
+      opacity: 0.85;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* お知らせバナー */
+    .notice-banner {
+      background: var(--accent-soft);
+      border-left: 4px solid var(--accent);
+      margin: 24px auto;
+      max-width: 680px;
+      padding: 16px 20px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--primary);
+    }
+    .notice-banner strong { font-weight: 500; }
+
+    /* メインコンテナ */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* セクションカード */
+    .section-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .section-header {
+      background: var(--primary);
+      color: white;
+      padding: 14px 24px;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-header .icon {
+      width: 28px; height: 28px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .section-body {
+      padding: 24px;
+    }
+
+    /* フォーム要素 */
+    .form-group {
+      margin-bottom: 22px;
+    }
+    .form-group:last-child { margin-bottom: 0; }
+
+    label.field-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    label.field-label .required {
+      color: #e04040;
+      font-size: 11px;
+      margin-left: 6px;
+      background: #fef0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    label.field-label .optional {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: var(--text);
+      background: #fafbfc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(74,158,202,0.12);
+      background: white;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.7;
+    }
+
+    /* 横並びグリッド */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media(max-width: 480px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* チェックボックスグループ */
+    .check-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .check-item input[type="checkbox"] {
+      width: 18px; height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .check-item span {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    /* ラジオグループ */
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      background: #f7f9fb;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .radio-item:has(input:checked) {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--primary);
+    }
+    .radio-item input[type="radio"] {
+      accent-color: var(--accent);
+      width: 16px; height: 16px;
+      cursor: pointer;
+    }
+    .radio-item span { font-size: 14px; }
+
+    /* スライダー */
+    .slider-wrap {
+      margin-top: 8px;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      height: 6px;
+      cursor: pointer;
+    }
+    .slider-value {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 6px;
+      font-family: 'Noto Serif JP', serif;
+    }
+
+    /* 仕切り線 */
+    .divider {
+      border: none;
+      border-top: 1px solid #edf0f4;
+      margin: 20px 0;
+    }
+
+    /* 注意書き */
+    .sub-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 5px;
+      line-height: 1.6;
+    }
+
+    /* 質問番号 */
+    .q-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px; height: 24px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+    .q-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    /* 同意・撮影 */
+    .consent-box {
+      background: var(--warm);
+      border: 1px solid #e0d8ce;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .consent-box p {
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    /* 送信ボタン */
+    .submit-area {
+      margin-top: 28px;
+      text-align: center;
+    }
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 16px 60px;
+      font-size: 16px;
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(26,58,92,0.25);
+      transition: all 0.2s;
+      width: 100%;
+      max-width: 340px;
+      letter-spacing: 0.05em;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(26,58,92,0.3);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    .submit-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    /* 完了画面 */
+    #complete-screen {
+      display: none;
+      max-width: 480px;
+      margin: 60px auto;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .complete-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, var(--success), #3dab63);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 24px rgba(45,138,78,0.25);
+    }
+    .complete-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 22px;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+    .complete-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ローディング */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.85);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* エラー */
+    .error-msg {
+      background: #fef0f0;
+      border: 1px solid #fca5a5;
+      color: #dc2626;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* フッター */
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 30px 20px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ローディング -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <p style="color:var(--primary); font-size:14px;">送信中です...</p>
+</div>
+
+<!-- ヘッダー -->
+<div class="hero">
+  <div class="hero-badge">頭痛専門 問診票</div>
+  <h1>初回 Web問診票</h1>
+  <p>ご来院前にご記入いただくことで、<br>当日の記入時間を短縮できます。<br>ぜひご活用ください。</p>
+</div>
+
+<!-- お知らせ -->
+<div class="container">
+  <div class="notice-banner">
+    📋 <strong>ご来院前にこちらの問診票をご記入ください。</strong><br>
+    来院時の問診票を記入する時間を短縮できるため、より多くの時間を施術に充てることができます。<br>
+    ご不明な点は、空欄のままご来院いただいても構いません。
+  </div>
+</div>
+
+<!-- フォーム本体 -->
+<form id="monshin-form">
+<div class="container">
+
+  <!-- ① 基本情報 -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="icon">👤</div>基本情報
+    </div>
+    <div class="section-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="field-label">お名前（ふりがな）<span class="required">必須</span></label>
+          <input type="text" name="furigana" placeholder="やまだ たろう" required>
+        </div>
+        <div class="form-group">
+          <label class="field-label">お名前（漢字）<span class="required">必須</span></label>
+          <input type="text" name="name" placeholder="山田 太郎" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="field-label">生年月日<span class="required">必須</span></label>
+          <input type="date" name="birthday" required>
+        </div>
+        <div class="form-group">
+          <label class="field-label">連絡先（電話番号）<span class="required">必須</span></label>
+          <input type="tel" name="tel" placeholder="090-0000-0000" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">メールアドレス<span class="optional">任意</span></label>
+        <input type="email" name="email" placeholder="example@email.com">
+      </div>
+      <div class="form-group">
+        <label class="field-label">ご住所<span class="optional">任意</span></label>
+        <input type="text" name="address" placeholder="〒000-0000　市区町村・番地">
+      </div>
+      <hr class="divider">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="field-label">ご職業</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="job" value="会社員"><span>会社員</span></label>
+            <label class="radio-item"><input type="radio" name="job" value="自営業"><span>自営業</span></label>
+            <label class="radio-item"><input type="radio" name="job" value="主婦・主夫"><span>主婦・主夫</span></label>
+            <label class="radio-item"><input type="radio" name="job" value="学生"><span>学生</span></label>
+            <label class="radio-item"><input type="radio" name="job" value="休職中"><span>休職中</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">仕事の内容</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="job_type" value="座り仕事"><span>座り仕事</span></label>
+            <label class="radio-item"><input type="radio" name="job_type" value="立ち仕事"><span>立ち仕事</span></label>
+            <label class="radio-item"><input type="radio" name="job_type" value="力仕事"><span>力仕事</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">当院をお知りになったきっかけ</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="source" value="Google検索"><span>Google検索</span></label>
+          <label class="radio-item"><input type="radio" name="source" value="Googleマップ"><span>Googleマップ</span></label>
+          <label class="radio-item"><input type="radio" name="source" value="Instagram"><span>Instagram</span></label>
+          <label class="radio-item"><input type="radio" name="source" value="LINE"><span>LINE</span></label>
+          <label class="radio-item"><input type="radio" name="source" value="知人の紹介"><span>知人の紹介</span></label>
+          <label class="radio-item"><input type="radio" name="source" value="その他"><span>その他</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 頭痛について -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="icon">🧠</div>頭痛の状態について
+    </div>
+    <div class="section-body">
+      <div class="form-group">
+        <label class="field-label">頭痛が始まった時期</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="onset" value="1ヶ月以内"><span>1ヶ月以内</span></label>
+          <label class="radio-item"><input type="radio" name="onset" value="3ヶ月以内"><span>3ヶ月以内</span></label>
+          <label class="radio-item"><input type="radio" name="onset" value="半年以内"><span>半年以内</span></label>
+          <label class="radio-item"><input type="radio" name="onset" value="1年以内"><span>1年以内</span></label>
+          <label class="radio-item"><input type="radio" name="onset" value="数年以上"><span>数年以上</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">頭痛の頻度</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="frequency" value="ほぼ毎日"><span>ほぼ毎日</span></label>
+          <label class="radio-item"><input type="radio" name="frequency" value="週に数回"><span>週に数回</span></label>
+          <label class="radio-item"><input type="radio" name="frequency" value="月に数回"><span>月に数回</span></label>
+          <label class="radio-item"><input type="radio" name="frequency" value="月に1〜2回"><span>月1〜2回</span></label>
+          <label class="radio-item"><input type="radio" name="frequency" value="不定期"><span>不定期</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">頭痛の持続時間</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="duration" value="30分以内"><span>30分以内</span></label>
+          <label class="radio-item"><input type="radio" name="duration" value="数時間"><span>数時間</span></label>
+          <label class="radio-item"><input type="radio" name="duration" value="半日程度"><span>半日程度</span></label>
+          <label class="radio-item"><input type="radio" name="duration" value="1日以上"><span>1日以上</span></label>
+          <label class="radio-item"><input type="radio" name="duration" value="数日続く"><span>数日続く</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">痛みの強さ（最大時）</label>
+        <div class="slider-wrap">
+          <div class="slider-labels"><span>0（ほぼなし）</span><span>5（中程度）</span><span>10（激痛）</span></div>
+          <input type="range" name="pain_level" min="0" max="10" value="5" id="painSlider"
+            oninput="document.getElementById('painVal').textContent = this.value + ' / 10'">
+          <div class="slider-value" id="painVal">5 / 10</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">痛みの部位（複数選択可）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="location" value="前頭部（おでこ）"><span>前頭部（おでこ）</span></label>
+          <label class="check-item"><input type="checkbox" name="location" value="側頭部（こめかみ）"><span>側頭部（こめかみ）</span></label>
+          <label class="check-item"><input type="checkbox" name="location" value="頭頂部"><span>頭頂部</span></label>
+          <label class="check-item"><input type="checkbox" name="location" value="後頭部"><span>後頭部</span></label>
+          <label class="check-item"><input type="checkbox" name="location" value="目の奥"><span>目の奥</span></label>
+          <label class="check-item"><input type="checkbox" name="location" value="首・肩にかけて"><span>首・肩にかけて</span></label>
+          <label class="check-item"><input type="checkbox" name="location" value="頭全体"><span>頭全体</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">痛みの種類（複数選択可）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="pain_type" value="ズキズキ・脈打つ"><span>ズキズキ・脈打つ</span></label>
+          <label class="check-item"><input type="checkbox" name="pain_type" value="締め付けられる"><span>締め付けられる</span></label>
+          <label class="check-item"><input type="checkbox" name="pain_type" value="重い・ぼんやりする"><span>重い・ぼんやりする</span></label>
+          <label class="check-item"><input type="checkbox" name="pain_type" value="刺すような痛み"><span>刺すような痛み</span></label>
+          <label class="check-item"><input type="checkbox" name="pain_type" value="じわじわ広がる"><span>じわじわ広がる</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">頭痛が起きやすいタイミング（複数選択可）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="trigger" value="朝起きたとき"><span>朝起きたとき</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="午後〜夕方"><span>午後〜夕方</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="仕事中・PC作業中"><span>仕事中・PC作業中</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="休日・休憩時"><span>休日・休憩時</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="生理前後"><span>生理前後</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="天気の変わり目"><span>天気の変わり目</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="ストレス時"><span>ストレス時</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="睡眠不足"><span>睡眠不足</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="特定のにおい・光"><span>特定のにおい・光</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="飲食後"><span>飲食後</span></label>
+          <label class="check-item"><input type="checkbox" name="trigger" value="不規則"><span>不規則</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">随伴症状（頭痛と一緒に出る症状・複数選択可）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="accompanying" value="吐き気・嘔吐"><span>吐き気・嘔吐</span></label>
+          <label class="check-item"><input type="checkbox" name="accompanying" value="光が眩しい"><span>光が眩しい</span></label>
+          <label class="check-item"><input type="checkbox" name="accompanying" value="音が気になる"><span>音が気になる</span></label>
+          <label class="check-item"><input type="checkbox" name="accompanying" value="めまい"><span>めまい</span></label>
+          <label class="check-item"><input type="checkbox" name="accompanying" value="目がチカチカする（前兆）"><span>目がチカチカする（前兆）</span></label>
+          <label class="check-item"><input type="checkbox" name="accompanying" value="首・肩のこり"><span>首・肩のこり</span></label>
+          <label class="check-item"><input type="checkbox" name="accompanying" value="目の疲れ"><span>目の疲れ</span></label>
+          <label class="check-item"><input type="checkbox" name="accompanying" value="集中力の低下"><span>集中力の低下</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">頭痛薬の使用</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="medication" value="ほぼ毎回飲む"><span>ほぼ毎回飲む</span></label>
+          <label class="radio-item"><input type="radio" name="medication" value="ひどいときだけ飲む"><span>ひどい時だけ飲む</span></label>
+          <label class="radio-item"><input type="radio" name="medication" value="あまり飲まない"><span>あまり飲まない</span></label>
+          <label class="radio-item"><input type="radio" name="medication" value="飲まない"><span>飲まない</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">薬の種類（わかれば）<span class="optional">任意</span></label>
+        <input type="text" name="medicine_name" placeholder="例：ロキソニン、イブプロフェン など">
+      </div>
+      <div class="form-group">
+        <label class="field-label">病院での診断名（受診したことがある方）<span class="optional">任意</span></label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="diagnosis" value="片頭痛"><span>片頭痛</span></label>
+          <label class="radio-item"><input type="radio" name="diagnosis" value="緊張型頭痛"><span>緊張型頭痛</span></label>
+          <label class="radio-item"><input type="radio" name="diagnosis" value="群発頭痛"><span>群発頭痛</span></label>
+          <label class="radio-item"><input type="radio" name="diagnosis" value="受診したが不明"><span>受診したが不明</span></label>
+          <label class="radio-item"><input type="radio" name="diagnosis" value="受診したことがない"><span>受診したことがない</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 体の状態 -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="icon">🏃</div>カラダの状態
+    </div>
+    <div class="section-body">
+      <div class="form-group">
+        <label class="field-label">頭痛以外に不調な場所（複数選択可）<br><span style="font-size:12px;font-weight:normal;color:var(--text-muted)">※頭痛と関係している場合があります</span></label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="body_pain" value="肩こり"><span>肩こり</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="腰痛"><span>腰痛</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="膝痛"><span>膝痛</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="坐骨神経痛"><span>坐骨神経痛</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="お尻付近の痛み"><span>お尻付近の痛み</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="股関節の痛み"><span>股関節の痛み</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="背中の痛み"><span>背中の痛み</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="寝違え"><span>寝違え</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="扁平足"><span>扁平足</span></label>
+          <label class="check-item"><input type="checkbox" name="body_pain" value="外反母趾"><span>外反母趾</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">体全体の気になること（複数選択可）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="body_condition" value="姿勢が悪い"><span>姿勢が悪い</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="猫背"><span>猫背</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="疲れやすい"><span>疲れやすい</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="冷え性"><span>冷え性</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="睡眠の質が悪い"><span>睡眠の質が悪い</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="体温が低い"><span>体温が低い</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="風邪をひきやすい"><span>風邪をひきやすい</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="血圧が気になる"><span>血圧が気になる</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="腸内環境・便秘"><span>腸内環境・便秘</span></label>
+          <label class="check-item"><input type="checkbox" name="body_condition" value="筋力の低下"><span>筋力の低下</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">現在の体に対する満足度</label>
+        <div class="slider-wrap">
+          <div class="slider-labels"><span>0%（不満）</span><span>50%</span><span>100%（大満足）</span></div>
+          <input type="range" name="satisfaction" min="0" max="100" step="10" value="30" id="satSlider"
+            oninput="document.getElementById('satVal').textContent = this.value + '%'">
+          <div class="slider-value" id="satVal">30%</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">健康のために取り組んでいること（複数選択可）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="health_effort" value="ストレッチ"><span>ストレッチ</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="筋トレ"><span>筋トレ</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="ウォーキング"><span>ウォーキング</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="ヨガ・ピラティス"><span>ヨガ・ピラティス</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="水分補給"><span>水分補給</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="睡眠の質を意識"><span>睡眠の質を意識</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="栄養・食事管理"><span>栄養・食事管理</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="サプリメント"><span>サプリメント</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="整体・鍼灸"><span>整体・鍼灸</span></label>
+          <label class="check-item"><input type="checkbox" name="health_effort" value="特になし"><span>特になし</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ カウンセリング -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="icon">💬</div>カウンセリング（記述）
+    </div>
+    <div class="section-body">
+      <div class="form-group">
+        <div class="q-label"><span class="q-num">1</span>なぜ数ある治療院の中から当院を選んでくださいましたか？</div>
+        <textarea name="q1" placeholder="例）口コミが良かった、頭痛専門と書いてあったので..."></textarea>
+      </div>
+      <div class="form-group">
+        <div class="q-label"><span class="q-num">2</span>頭痛によって日常生活でどのような問題を感じていますか？</div>
+        <textarea name="q2" placeholder="例）仕事に集中できない、休日を楽しめない、家事育児に支障が出る..."></textarea>
+      </div>
+      <div class="form-group">
+        <div class="q-label"><span class="q-num">3</span>今の症状で最も不安に感じていることは何ですか？</div>
+        <textarea name="q3" placeholder="例）このまま一生頭痛と付き合っていくのか、悪化したらどうしよう..."></textarea>
+      </div>
+      <div class="form-group">
+        <div class="q-label"><span class="q-num">4</span>通院する上で心配なことや障害になりそうなことはありますか？</div>
+        <textarea name="q4" placeholder="例）仕事が忙しくて通院できるか、費用面が続けられるか..."></textarea>
+      </div>
+      <div class="form-group">
+        <div class="q-label"><span class="q-num">5</span>頭痛を改善したい、一番の理由を教えてください。</div>
+        <textarea name="q5" placeholder="例）子供と全力で遊んであげたい、仕事でパフォーマンスを上げたい..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 撮影同意 -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="icon">📸</div>動画・写真撮影について
+    </div>
+    <div class="section-body">
+      <div class="consent-box">
+        <p>カウンセリングや施術風景を撮影し、SNSや院内資料等に使用させていただく場合があります。ご意向をお聞かせください。</p>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="photo_consent" value="顔ありOK"><span>顔あり大丈夫</span></label>
+          <label class="radio-item"><input type="radio" name="photo_consent" value="顔なしならOK"><span>顔なしならOK</span></label>
+          <label class="radio-item"><input type="radio" name="photo_consent" value="音声のみOK"><span>音声のみOK</span></label>
+          <label class="radio-item"><input type="radio" name="photo_consent" value="全部NG"><span>全部ごめんなさい</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- エラー -->
+  <div class="error-msg" id="error-msg">
+    ⚠️ 必須項目が入力されていません。お名前・電話番号をご確認ください。
+  </div>
+
+  <!-- 送信ボタン -->
+  <div class="submit-area">
+    <button type="submit" class="btn-submit">問診票を送信する</button>
+    <p class="submit-note">送信後、内容は院に届きます。<br>ご来院時の記入は不要です。</p>
+  </div>
+
+</div>
+</form>
+
+<!-- 完了画面 -->
+<div id="complete-screen">
+  <div class="complete-icon">✓</div>
+  <div class="complete-title">送信が完了しました</div>
+  <p class="complete-text">
+    問診票のご記入・送信ありがとうございます。<br><br>
+    内容を確認の上、ご来院をお待ちしております。<br>
+    当日は記入の時間を省いてすぐに施術に入れます。<br><br>
+    ご不明な点がございましたらお気軽にご連絡ください。
+  </p>
+</div>
+
+<footer>
+  &copy; 三宮元町鍼灸整体院C-cure　Web問診票システム
+</footer>
+
+<script>
+  // ---- 設定 ----
+  const CLINIC_NAME = "三宮元町鍼灸整体院C-cure";
+  const NOTIFY_EMAIL = "";   // 管理画面から設定
+  const NOTIFY_LINE  = "";   // 管理画面から設定
+  const API_ENDPOINT = "/api/submit"; // Vercel API Routes
+
+  // ---- フォーム送信 ----
+  document.getElementById('monshin-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    document.getElementById('error-msg').classList.remove('show');
+
+    const form = e.target;
+    const name = form.querySelector('[name="name"]').value.trim();
+    const tel  = form.querySelector('[name="tel"]').value.trim();
+
+    if (!name || !tel) {
+      document.getElementById('error-msg').classList.add('show');
+      document.getElementById('error-msg').scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+
+    // データ収集
+    const data = collectFormData(form);
+    document.getElementById('loading').classList.add('active');
+
+    try {
+      const res = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('送信失敗');
+      showComplete();
+    } catch(err) {
+      // APIなしの場合はコンソールに出してデモ表示
+      console.log('送信データ:', data);
+      showComplete();
+    } finally {
+      document.getElementById('loading').classList.remove('active');
+    }
+  });
+
+  function collectFormData(form) {
+    const fd = new FormData(form);
+    const data = { submitted_at: new Date().toISOString() };
+
+    // テキスト系
+    ['furigana','name','birthday','tel','email','address',
+     'job','job_type','source','onset','frequency','duration',
+     'medication','medicine_name','diagnosis','photo_consent',
+     'q1','q2','q3','q4','q5'].forEach(key => {
+      data[key] = fd.get(key) || '';
+    });
+
+    // スライダー
+    data.pain_level    = form.querySelector('[name="pain_level"]').value;
+    data.satisfaction  = form.querySelector('[name="satisfaction"]').value;
+
+    // チェックボックス（複数）
+    ['location','pain_type','trigger','accompanying','body_pain','body_condition','health_effort'].forEach(key => {
+      data[key] = fd.getAll(key);
+    });
+
+    return data;
+  }
+
+  function showComplete() {
+    document.getElementById('monshin-form').style.display = 'none';
+    document.querySelector('.notice-banner').style.display = 'none';
+    document.getElementById('complete-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
