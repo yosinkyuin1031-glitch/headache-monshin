@@ -36,7 +36,39 @@ interface Clinic {
   response_count: number
 }
 
-type Tab = 'responses' | 'clinics' | 'codes'
+interface DiaryRecord {
+  id: string
+  patient_id: string
+  record_date: string
+  onset_period: string
+  pain_level: number
+  pain_types: string[]
+  pain_location: string[]
+  accompanying_symptoms: string[]
+  triggers: string[]
+  weather: string
+  sleep_hours: number
+  stress_level: number
+  medications_list: Array<{ name: string; time: string; effect: string }>
+  med_effect: string
+  daily_impact: number
+  memo: string
+}
+
+interface DiaryPatient {
+  id: string
+  name: string
+  phone: string
+  access_code: string
+  memo: string
+  created_at: string
+  records: DiaryRecord[]
+  total_records: number
+  avg_pain: number
+  last_record_date: string | null
+}
+
+type Tab = 'responses' | 'diary' | 'clinics' | 'codes'
 
 export default function AdminPage() {
   const [token, setToken] = useState<string | null>(null)
@@ -60,6 +92,12 @@ export default function AdminPage() {
   // クリニック関連
   const [clinics, setClinics] = useState<Clinic[]>([])
   const [clinicsLoading, setClinicsLoading] = useState(false)
+
+  // ダイアリー関連
+  const [diaryPatients, setDiaryPatients] = useState<DiaryPatient[]>([])
+  const [diaryLoading, setDiaryLoading] = useState(false)
+  const [selectedPatient, setSelectedPatient] = useState<DiaryPatient | null>(null)
+  const [diarySearch, setDiarySearch] = useState('')
 
   useEffect(() => {
     const savedToken = sessionStorage.getItem('admin_token')
@@ -96,6 +134,21 @@ export default function AdminPage() {
     }
   }, [])
 
+  const fetchDiary = useCallback(async (authToken: string) => {
+    setDiaryLoading(true)
+    try {
+      const res = await fetch('/api/admin/diary', {
+        headers: { 'Authorization': `Bearer ${authToken}` },
+      })
+      const json = await res.json()
+      if (json.success) setDiaryPatients(json.data || [])
+    } catch (err) {
+      console.error('Fetch diary error:', err)
+    } finally {
+      setDiaryLoading(false)
+    }
+  }, [])
+
   const fetchClinics = useCallback(async (authToken: string) => {
     setClinicsLoading(true)
     try {
@@ -116,8 +169,9 @@ export default function AdminPage() {
       fetchResponses(token)
       fetchInviteCodes(token)
       fetchClinics(token)
+      fetchDiary(token)
     }
-  }, [token, fetchResponses, fetchInviteCodes, fetchClinics])
+  }, [token, fetchResponses, fetchInviteCodes, fetchClinics, fetchDiary])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -147,6 +201,7 @@ export default function AdminPage() {
     setResponses([])
     setInviteCodes([])
     setClinics([])
+    setDiaryPatients([])
   }
 
   const handleGenerateCodes = async () => {
@@ -284,7 +339,8 @@ export default function AdminPage() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex gap-1">
               {([
-                { key: 'responses' as Tab, label: '自院の問診データ', count: responses.length },
+                { key: 'responses' as Tab, label: '問診票データ', count: responses.length },
+                { key: 'diary' as Tab, label: '頭痛ダイアリー', count: diaryPatients.reduce((s, p) => s + p.total_records, 0) },
                 { key: 'clinics' as Tab, label: '受講生一覧', count: clinics.length },
                 { key: 'codes' as Tab, label: '招待コード管理', count: inviteCodes.filter(c => !c.is_used && !isExpired(c.expires_at)).length },
               ]).map(tab => (
@@ -386,6 +442,131 @@ export default function AdminPage() {
                             </td>
                           </tr>
                         ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* === 頭痛ダイアリータブ === */}
+          {activeTab === 'diary' && (
+            <>
+              {/* 患者名で紐づけ情報 */}
+              {(() => {
+                const totalRecords = diaryPatients.reduce((s, p) => s + p.total_records, 0)
+                const linkedCount = diaryPatients.filter(p => {
+                  return responses.some(r =>
+                    r.patient_name === p.name ||
+                    (r.patient_tel && p.phone && r.patient_tel === p.phone)
+                  )
+                }).length
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-white rounded-xl shadow-sm p-5">
+                      <p className="text-sm text-gray-500">ダイアリー患者数</p>
+                      <p className="text-3xl font-bold text-[#1a3a5c]">{diaryPatients.length}</p>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-sm p-5">
+                      <p className="text-sm text-gray-500">総記録数</p>
+                      <p className="text-3xl font-bold text-[#4a9eca]">{totalRecords}</p>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-sm p-5">
+                      <p className="text-sm text-gray-500">問診票と紐づき</p>
+                      <p className="text-3xl font-bold text-[#2d8a4e]">{linkedCount}</p>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-sm p-5">
+                      <p className="text-sm text-gray-500">平均記録数/人</p>
+                      <p className="text-3xl font-bold text-[#8b5cf6]">
+                        {diaryPatients.length > 0 ? Math.round(totalRecords / diaryPatients.length * 10) / 10 : 0}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })()}
+
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={diarySearch}
+                  onChange={(e) => setDiarySearch(e.target.value)}
+                  placeholder="患者名で検索..."
+                  className="w-full max-w-md border border-gray-300 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#4a9eca] focus:border-transparent bg-white"
+                />
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                {diaryLoading ? (
+                  <div className="p-12 text-center text-gray-400">読み込み中...</div>
+                ) : diaryPatients.length === 0 ? (
+                  <div className="p-12 text-center text-gray-400">ダイアリーの患者データはありません</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-[#1a3a5c] text-white">
+                          <th className="text-left px-4 py-3 font-medium">患者名</th>
+                          <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">電話番号</th>
+                          <th className="text-center px-4 py-3 font-medium">記録数</th>
+                          <th className="text-center px-4 py-3 font-medium">平均痛み</th>
+                          <th className="text-left px-4 py-3 font-medium hidden md:table-cell">最終記録日</th>
+                          <th className="text-center px-4 py-3 font-medium">問診票</th>
+                          <th className="text-center px-4 py-3 font-medium">操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {diaryPatients
+                          .filter(p => !diarySearch || p.name?.includes(diarySearch))
+                          .map((p, i) => {
+                            const linkedMonshin = responses.find(r =>
+                              r.patient_name === p.name ||
+                              (r.patient_tel && p.phone && r.patient_tel === p.phone)
+                            )
+                            return (
+                              <tr key={p.id} className={`border-b border-gray-100 hover:bg-blue-50/50 cursor-pointer transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`} onClick={() => setSelectedPatient(p)}>
+                                <td className="px-4 py-3 font-medium text-[#1a3a5c]">
+                                  {p.name}
+                                  <span className="block text-xs text-gray-400 font-mono">{p.access_code}</span>
+                                </td>
+                                <td className="px-4 py-3 text-gray-600 hidden sm:table-cell">{p.phone || '-'}</td>
+                                <td className="px-4 py-3 text-center">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {p.total_records}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-center">
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    p.avg_pain >= 7 ? 'bg-red-100 text-red-800' :
+                                    p.avg_pain >= 4 ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-green-100 text-green-800'
+                                  }`}>
+                                    {p.avg_pain}/10
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-gray-600 text-xs hidden md:table-cell">
+                                  {p.last_record_date || '-'}
+                                </td>
+                                <td className="px-4 py-3 text-center">
+                                  {linkedMonshin ? (
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                      紐づき
+                                    </span>
+                                  ) : (
+                                    <span className="text-xs text-gray-400">-</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 text-center">
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); setSelectedPatient(p) }}
+                                    className="bg-[#4a9eca] hover:bg-[#3a8eba] text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                                  >
+                                    詳細
+                                  </button>
+                                </td>
+                              </tr>
+                            )
+                          })}
                       </tbody>
                     </table>
                   </div>
@@ -643,6 +824,133 @@ export default function AdminPage() {
                     送信日時: {formatDate(selectedResponse.submitted_at)} / ID: {selectedResponse.id}
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ダイアリー患者詳細モーダル */}
+        {selectedPatient && (
+          <div
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedPatient(null)}
+          >
+            <div
+              className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-[#1a3a5c] text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+                <div>
+                  <h2 className="text-lg font-bold">{selectedPatient.name} 様の頭痛ダイアリー</h2>
+                  <p className="text-xs opacity-70">アクセスコード: {selectedPatient.access_code} / 記録数: {selectedPatient.total_records}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedPatient(null)}
+                  className="bg-white/10 hover:bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center transition-colors text-lg"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* 紐づいた問診票 */}
+                {(() => {
+                  const linked = responses.find(r =>
+                    r.patient_name === selectedPatient.name ||
+                    (r.patient_tel && selectedPatient.phone && r.patient_tel === selectedPatient.phone)
+                  )
+                  if (!linked) return null
+                  return (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <p className="text-sm font-bold text-green-800 mb-2">紐づいた問診票データ</p>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-green-700">
+                        <div>送信日: {formatDate(linked.submitted_at)}</div>
+                        <div>電話: {linked.patient_tel}</div>
+                        <div>痛みレベル: {String((linked.form_data)?.pain_level ?? '-')}/10</div>
+                        <div>頻度: {renderValue((linked.form_data)?.frequency)}</div>
+                      </div>
+                      <button
+                        onClick={() => { setSelectedPatient(null); setSelectedResponse(linked); }}
+                        className="mt-2 text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded transition-colors"
+                      >
+                        問診票の詳細を見る
+                      </button>
+                    </div>
+                  )
+                })()}
+
+                {/* KPIカード */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500">平均痛み</p>
+                    <p className={`text-2xl font-bold ${selectedPatient.avg_pain >= 7 ? 'text-red-600' : selectedPatient.avg_pain >= 4 ? 'text-yellow-600' : 'text-green-600'}`}>
+                      {selectedPatient.avg_pain}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500">総記録数</p>
+                    <p className="text-2xl font-bold text-[#1a3a5c]">{selectedPatient.total_records}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500">平均睡眠</p>
+                    <p className="text-2xl font-bold text-[#4a9eca]">
+                      {selectedPatient.records.length > 0
+                        ? (Math.round(selectedPatient.records.reduce((s: number, r: DiaryRecord) => s + (r.sleep_hours || 0), 0) / selectedPatient.records.length * 10) / 10)
+                        : '-'}h
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500">平均ストレス</p>
+                    <p className="text-2xl font-bold text-[#8b5cf6]">
+                      {selectedPatient.records.length > 0
+                        ? (Math.round(selectedPatient.records.reduce((s: number, r: DiaryRecord) => s + (r.stress_level || 0), 0) / selectedPatient.records.length * 10) / 10)
+                        : '-'}/5
+                    </p>
+                  </div>
+                </div>
+
+                {/* 記録一覧 */}
+                <section>
+                  <h3 className="text-base font-bold text-[#1a3a5c] mb-3 pb-2 border-b-2 border-[#4a9eca]">記録履歴</h3>
+                  {selectedPatient.records.length === 0 ? (
+                    <p className="text-sm text-gray-400">記録がありません</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {selectedPatient.records.slice(0, 20).map((r: DiaryRecord) => (
+                        <div key={r.id} className="bg-gray-50 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-bold text-[#1a3a5c]">{r.record_date}</span>
+                            <div className="flex items-center gap-2">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                r.pain_level >= 7 ? 'bg-red-100 text-red-800' :
+                                r.pain_level >= 4 ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                痛み {r.pain_level}/10
+                              </span>
+                              {r.weather && (
+                                <span className="text-xs text-gray-500">{r.weather}</span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                            {r.onset_period && <div>発症時間帯: {r.onset_period}</div>}
+                            {r.pain_types?.length > 0 && <div>痛みの種類: {r.pain_types.join('、')}</div>}
+                            {r.pain_location?.length > 0 && <div>痛みの部位: {r.pain_location.join('、')}</div>}
+                            {r.triggers?.length > 0 && <div>トリガー: {r.triggers.join('、')}</div>}
+                            {r.accompanying_symptoms?.length > 0 && <div>随伴症状: {r.accompanying_symptoms.join('、')}</div>}
+                            <div>睡眠: {r.sleep_hours}h / ストレス: {r.stress_level}/5</div>
+                            {r.daily_impact !== undefined && <div>日常への支障: {['なし', '軽度', '中度', '重度'][r.daily_impact] || '-'}</div>}
+                            {r.med_effect && <div>薬の効果: {r.med_effect}</div>}
+                          </div>
+                          {r.memo && (
+                            <p className="mt-2 text-xs text-gray-500 bg-white rounded p-2">{r.memo}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
               </div>
             </div>
           </div>
