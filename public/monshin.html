@@ -802,6 +802,8 @@
 
 <script>
   // ---- 設定 ----
+  const urlParams = new URLSearchParams(window.location.search);
+  const CLINIC_ID = urlParams.get('clinic') || '';
   const CLINIC_NAME = "三宮元町鍼灸整体院C-cure";
   const NOTIFY_EMAIL = "";   // 管理画面から設定
   const NOTIFY_LINE  = "";   // 管理画面から設定
@@ -845,7 +847,7 @@
 
   function collectFormData(form) {
     const fd = new FormData(form);
-    const data = { submitted_at: new Date().toISOString() };
+    const data = { submitted_at: new Date().toISOString(), clinic_id: CLINIC_ID || undefined };
 
     // テキスト系
     ['furigana','name','birthday','tel','email','address',

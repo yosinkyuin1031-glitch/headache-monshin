@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const clinicId = process.env.CLINIC_ID || 'ccure-clinic'
+    const clinicId = body.clinic_id || process.env.CLINIC_ID || 'ccure-clinic'
     const submittedAt = body.submitted_at || new Date().toISOString()
 
     // Supabaseに保存
