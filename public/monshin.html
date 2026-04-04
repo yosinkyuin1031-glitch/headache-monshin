@@ -506,7 +506,7 @@
       <hr class="divider">
       <div class="form-row">
         <div class="form-group">
-          <label class="field-label">ご職業</label>
+          <label class="field-label">ご職業<span class="optional">任意</span></label>
           <div class="radio-group">
             <label class="radio-item"><input type="radio" name="job" value="会社員"><span>会社員</span></label>
             <label class="radio-item"><input type="radio" name="job" value="自営業"><span>自営業</span></label>
@@ -516,7 +516,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="field-label">仕事の内容</label>
+          <label class="field-label">仕事の内容<span class="optional">任意</span></label>
           <div class="radio-group">
             <label class="radio-item"><input type="radio" name="job_type" value="座り仕事"><span>座り仕事</span></label>
             <label class="radio-item"><input type="radio" name="job_type" value="立ち仕事"><span>立ち仕事</span></label>
@@ -525,7 +525,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">当院をお知りになったきっかけ</label>
+        <label class="field-label">当院をお知りになったきっかけ<span class="optional">任意</span></label>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="source" value="Google検索"><span>Google検索</span></label>
           <label class="radio-item"><input type="radio" name="source" value="Googleマップ"><span>Googleマップ</span></label>
@@ -545,7 +545,7 @@
     </div>
     <div class="section-body">
       <div class="form-group">
-        <label class="field-label">頭痛が始まった時期</label>
+        <label class="field-label">頭痛が始まった時期<span class="required">必須</span></label>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="onset" value="1ヶ月以内"><span>1ヶ月以内</span></label>
           <label class="radio-item"><input type="radio" name="onset" value="3ヶ月以内"><span>3ヶ月以内</span></label>
@@ -555,7 +555,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">頭痛の頻度</label>
+        <label class="field-label">頭痛の頻度<span class="required">必須</span></label>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="frequency" value="ほぼ毎日"><span>ほぼ毎日</span></label>
           <label class="radio-item"><input type="radio" name="frequency" value="週に数回"><span>週に数回</span></label>
@@ -565,7 +565,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">頭痛の持続時間</label>
+        <label class="field-label">頭痛の持続時間<span class="required">必須</span></label>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="duration" value="30分以内"><span>30分以内</span></label>
           <label class="radio-item"><input type="radio" name="duration" value="数時間"><span>数時間</span></label>
@@ -575,7 +575,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">痛みの強さ（最大時）</label>
+        <label class="field-label">痛みの強さ（最大時）<span class="required">必須</span></label>
         <div class="slider-wrap">
           <div class="slider-labels"><span>0（ほぼなし）</span><span>5（中程度）</span><span>10（激痛）</span></div>
           <input type="range" name="pain_level" min="0" max="10" value="5" id="painSlider"
@@ -584,7 +584,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">痛みの部位（複数選択可）</label>
+        <label class="field-label">痛みの部位（複数選択可）<span class="required">必須</span></label>
         <div class="check-group">
           <label class="check-item"><input type="checkbox" name="location" value="前頭部（おでこ）"><span>前頭部（おでこ）</span></label>
           <label class="check-item"><input type="checkbox" name="location" value="側頭部（こめかみ）"><span>側頭部（こめかみ）</span></label>
@@ -596,7 +596,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">痛みの種類（複数選択可）</label>
+        <label class="field-label">痛みの種類（複数選択可）<span class="required">必須</span></label>
         <div class="check-group">
           <label class="check-item"><input type="checkbox" name="pain_type" value="ズキズキ・脈打つ"><span>ズキズキ・脈打つ</span></label>
           <label class="check-item"><input type="checkbox" name="pain_type" value="締め付けられる"><span>締め付けられる</span></label>
@@ -606,7 +606,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">頭痛が起きやすいタイミング（複数選択可）</label>
+        <label class="field-label">頭痛が起きやすいタイミング（複数選択可）<span class="optional">任意</span></label>
         <div class="check-group">
           <label class="check-item"><input type="checkbox" name="trigger" value="朝起きたとき"><span>朝起きたとき</span></label>
           <label class="check-item"><input type="checkbox" name="trigger" value="午後〜夕方"><span>午後〜夕方</span></label>
@@ -622,7 +622,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">随伴症状（頭痛と一緒に出る症状・複数選択可）</label>
+        <label class="field-label">随伴症状（頭痛と一緒に出る症状・複数選択可）<span class="optional">任意</span></label>
         <div class="check-group">
           <label class="check-item"><input type="checkbox" name="accompanying" value="吐き気・嘔吐"><span>吐き気・嘔吐</span></label>
           <label class="check-item"><input type="checkbox" name="accompanying" value="光が眩しい"><span>光が眩しい</span></label>
@@ -635,7 +635,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">頭痛薬の使用</label>
+        <label class="field-label">頭痛薬の使用<span class="required">必須</span></label>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="medication" value="ほぼ毎回飲む"><span>ほぼ毎回飲む</span></label>
           <label class="radio-item"><input type="radio" name="medication" value="ひどいときだけ飲む"><span>ひどい時だけ飲む</span></label>
@@ -663,7 +663,7 @@
   <!-- ③ 体の状態 -->
   <div class="section-card">
     <div class="section-header">
-      <div class="icon">🏃</div>カラダの状態
+      <div class="icon">🏃</div>カラダの状態<span style="font-size:11px;opacity:0.7;margin-left:8px;">※任意</span>
     </div>
     <div class="section-body">
       <div class="form-group">
@@ -726,7 +726,7 @@
   <!-- ④ カウンセリング -->
   <div class="section-card">
     <div class="section-header">
-      <div class="icon">💬</div>カウンセリング（記述）
+      <div class="icon">💬</div>カウンセリング（記述）<span style="font-size:11px;opacity:0.7;margin-left:8px;">※任意</span>
     </div>
     <div class="section-body">
       <div class="form-group">
@@ -759,7 +759,7 @@
     </div>
     <div class="section-body">
       <div class="consent-box">
-        <p>カウンセリングや施術風景を撮影し、SNSや院内資料等に使用させていただく場合があります。ご意向をお聞かせください。</p>
+        <p>カウンセリングや施術風景を撮影し、SNSや院内資料等に使用させていただく場合があります。ご意向をお聞かせください。<span class="required">必須</span></p>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="photo_consent" value="顔ありOK"><span>顔あり大丈夫</span></label>
           <label class="radio-item"><input type="radio" name="photo_consent" value="顔なしならOK"><span>顔なしならOK</span></label>
@@ -772,7 +772,7 @@
 
   <!-- エラー -->
   <div class="error-msg" id="error-msg">
-    ⚠️ 必須項目が入力されていません。お名前・電話番号をご確認ください。
+    ⚠️ 必須項目が入力されていません。
   </div>
 
   <!-- 送信ボタン -->
@@ -812,15 +812,43 @@
   // ---- フォーム送信 ----
   document.getElementById('monshin-form').addEventListener('submit', async function(e) {
     e.preventDefault();
-    document.getElementById('error-msg').classList.remove('show');
+    const errEl = document.getElementById('error-msg');
+    errEl.classList.remove('show');
 
     const form = e.target;
-    const name = form.querySelector('[name="name"]').value.trim();
-    const tel  = form.querySelector('[name="tel"]').value.trim();
+    const missing = [];
 
-    if (!name || !tel) {
-      document.getElementById('error-msg').classList.add('show');
-      document.getElementById('error-msg').scrollIntoView({behavior:'smooth', block:'center'});
+    // 基本情報（テキスト）
+    if (!form.querySelector('[name="furigana"]').value.trim()) missing.push('お名前（ふりがな）');
+    if (!form.querySelector('[name="name"]').value.trim()) missing.push('お名前（漢字）');
+    if (!form.querySelector('[name="birthday"]').value) missing.push('生年月日');
+    if (!form.querySelector('[name="tel"]').value.trim()) missing.push('電話番号');
+
+    // 頭痛セクション（ラジオ）
+    const requiredRadios = [
+      { name: 'onset', label: '頭痛が始まった時期' },
+      { name: 'frequency', label: '頭痛の頻度' },
+      { name: 'duration', label: '頭痛の持続時間' },
+      { name: 'medication', label: '頭痛薬の使用' },
+      { name: 'photo_consent', label: '撮影同意' },
+    ];
+    requiredRadios.forEach(r => {
+      if (!form.querySelector(`[name="${r.name}"]:checked`)) missing.push(r.label);
+    });
+
+    // チェックボックス（1つ以上）
+    const requiredChecks = [
+      { name: 'location', label: '痛みの部位' },
+      { name: 'pain_type', label: '痛みの種類' },
+    ];
+    requiredChecks.forEach(c => {
+      if (!form.querySelector(`[name="${c.name}"]:checked`)) missing.push(c.label);
+    });
+
+    if (missing.length > 0) {
+      errEl.innerHTML = '⚠️ 以下の必須項目が入力されていません：<br><strong>' + missing.join('、') + '</strong>';
+      errEl.classList.add('show');
+      errEl.scrollIntoView({behavior:'smooth', block:'center'});
       return;
     }
 
