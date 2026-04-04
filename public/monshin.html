@@ -500,7 +500,7 @@
         <input type="email" name="email" placeholder="example@email.com">
       </div>
       <div class="form-group">
-        <label class="field-label">ご住所<span class="optional">任意</span></label>
+        <label class="field-label">ご住所<span class="required">必須</span></label>
         <input type="text" name="address" placeholder="〒000-0000　市区町村・番地">
       </div>
       <hr class="divider">
@@ -525,7 +525,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="field-label">当院をお知りになったきっかけ<span class="optional">任意</span></label>
+        <label class="field-label">当院をお知りになったきっかけ<span class="required">必須</span></label>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="source" value="Google検索"><span>Google検索</span></label>
           <label class="radio-item"><input type="radio" name="source" value="Googleマップ"><span>Googleマップ</span></label>
@@ -823,9 +823,11 @@
     if (!form.querySelector('[name="name"]').value.trim()) missing.push('お名前（漢字）');
     if (!form.querySelector('[name="birthday"]').value) missing.push('生年月日');
     if (!form.querySelector('[name="tel"]').value.trim()) missing.push('電話番号');
+    if (!form.querySelector('[name="address"]').value.trim()) missing.push('ご住所');
 
-    // 頭痛セクション（ラジオ）
+    // ラジオ必須
     const requiredRadios = [
+      { name: 'source', label: '当院をお知りになったきっかけ' },
       { name: 'onset', label: '頭痛が始まった時期' },
       { name: 'frequency', label: '頭痛の頻度' },
       { name: 'duration', label: '頭痛の持続時間' },
