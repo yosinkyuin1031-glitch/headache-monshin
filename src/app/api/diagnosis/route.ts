@@ -14,7 +14,7 @@ export async function OPTIONS() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { diagnosis_type, scores, answers } = body
+    const { diagnosis_type, scores, answers, clinic_id } = body
 
     if (!diagnosis_type) {
       return NextResponse.json(
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const supabase = getSupabase()
     const { data, error } = await supabase
       .from('diagnosis_results')
-      .insert({ diagnosis_type, scores, answers })
+      .insert({ diagnosis_type, scores, answers, clinic_id: clinic_id || 'ccure-clinic' })
       .select()
       .single()
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ---------- 設問データ ----------
 interface Choice {
@@ -257,8 +257,15 @@ export default function DiagnosisPage() {
   const [answers, setAnswers] = useState<number[]>([])
   const [result, setResult] = useState<DiagnosisResult | null>(null)
   const [saving, setSaving] = useState(false)
+  const [clinicId, setClinicId] = useState('ccure-clinic')
 
-  const lineUrl = process.env.NEXT_PUBLIC_LINE_URL || 'https://lin.ee/example'
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const c = params.get('clinic')
+    if (c) setClinicId(c)
+  }, [])
+
+  const lineUrl = process.env.NEXT_PUBLIC_LINE_URL || 'https://lin.ee/a8BkFp7'
 
   const handleStart = () => {
     setStep('quiz')
@@ -288,6 +295,7 @@ export default function DiagnosisPage() {
           body: JSON.stringify({
             diagnosis_type: type,
             scores,
+            clinic_id: clinicId,
             answers: newAnswers.map((a, i) => ({
               question: questions[i].text,
               answer: questions[i].choices[a]?.label,
@@ -323,7 +331,7 @@ export default function DiagnosisPage() {
       {/* ヘッダー */}
       <header className="bg-[#1a3a5c] text-white">
         <div className="max-w-lg mx-auto px-4 py-4 text-center">
-          <h1 className="text-base font-bold">頭痛タイプ診断</h1>
+          <h1 className="text-base font-bold">頭痛タイプチェック</h1>
           <p className="text-xs opacity-70 mt-0.5">三宮元町鍼灸整体院C-cure</p>
         </div>
       </header>
@@ -363,11 +371,11 @@ export default function DiagnosisPage() {
               onClick={handleStart}
               className="w-full bg-[#1a3a5c] hover:bg-[#2a5280] active:bg-[#0f2a45] text-white font-bold py-4 rounded-xl text-lg shadow-lg transition-all"
             >
-              診断をはじめる
+              チェックをはじめる
             </button>
 
             <p className="text-xs text-gray-400 text-center">
-              ※この診断は医療行為ではありません。参考としてご利用ください。
+              ※このチェックは医療行為ではありません。参考としてご利用ください。
             </p>
           </div>
         )}
@@ -505,7 +513,7 @@ export default function DiagnosisPage() {
               onClick={handleRetry}
               className="w-full text-gray-500 hover:text-gray-700 text-sm py-3 transition-colors"
             >
-              もう一度診断する
+              もう一度チェックする
             </button>
 
             {saving && (
@@ -513,7 +521,7 @@ export default function DiagnosisPage() {
             )}
 
             <p className="text-xs text-gray-400 text-center pb-4">
-              ※この診断は医療行為ではありません。症状が気になる場合は医療機関を受診してください。
+              ※このチェックは医療行為ではありません。症状が気になる場合は医療機関を受診してください。
             </p>
           </div>
         )}
